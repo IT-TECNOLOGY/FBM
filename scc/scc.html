@@ -1,0 +1,610 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>
+<script src="https://unpkg.com/html2pdf.js@0.10.1/dist/html2pdf.bundle.js"></script>
+<link href="https://fonts.cdnfonts.com/css/8bit-wonder" rel="stylesheet">
+		<title>Contracheque</title>
+	</head>
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+			<div class="container-fluid" style="background-color: black; height: 120px;">
+					<a class="navbar-brand" href="../index.html" style="color: orange; font-size: xx-large; font-weight: 600;">FBM</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+							<ul class="navbar-nav mb-2 mb-lg-0" style="margin-right: 50% !important;">
+									<li class="nav-item">
+											<a class="nav-link active" aria-current="page" href="#" style="color: orange; font-weight: 600;">INICIO</a>
+									</li>
+							</ul>
+							<form class="d-flex" style="background-color: white;
+								border-radius: 20px;">
+									<input style="border-radius: 20px 0px 0px 20px;
+										border: none;" class="form-control me-2 mx-auto" type="search" placeholder="Search" aria-label="Search">
+									<button style="border: none; color: black;" class="btn" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<circle cx="11" cy="11" r="8" />
+										<line x1="21" y1="21" x2="16.65" y2="16.65" />
+									</svg></button>
+							</form>
+							<ul class="navbar-nav">
+								<li class="nav-item dropdown">
+										<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: orange; font-weight: 600;">
+												Perfil
+										</a>
+										<ul class="dropdown-menu">
+												<li><a class="dropdown-item" href="#">Perfil do usuario</a></li>
+												<li><a class="dropdown-item" href="#">Configurações</a></li>
+												<li><hr class="dropdown-divider"></li>
+												<li><a class="dropdown-item" href="#">Sair</a></li>
+										</ul>
+								</li>
+							</ul>
+					</div>
+			</div>
+	</nav>
+
+	<style>
+		input{
+			width: 200px;
+			border: none;
+			height: 29px;
+		}
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+		.a{
+			background-color: #3edb3e4d;
+		}
+		.d{
+			background-color: #ffc0c0;
+		}
+
+		#salarioLiquidoTable {
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				z-index: 1000;
+			margin-bottom: -15px;/* Certifique-se de que está acima de outros elementos */
+		}
+
+		.contracheque thead tr td, .contracheque thead tr th, .contracheque tbody tr td, .contracheque tbody tr th{
+			text-align: start !important;
+			border-bottom: 1px solid #000;
+		}
+
+	</style>
+<body>
+  <div class="allBox">
+	<h2 class="text-center">Contracheque</h2>
+		<h3>Anotações</h3>
+			<textarea id="exemplo" style="width: 80%; border-radius: 20px; padding: 2%;"></textarea></br>
+			<button class="btn btn-success testar">testar</button>
+
+	<div style="margin-bottom: 5%;">
+		<h4 class="text-center">Empresa</h4>
+		<table class="table contracheque">
+			<thead>
+				<tr>
+					<th scope="col">Requisitos</th>
+					<th scope="col">Informações</th>
+					<th scope="col">Explicações</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th scope="row">Empregador:</th>
+					<td><input id="pegaPatrao" class="input a" type="text"></td>
+					<td>Nome do chefe/quem contrata</td>
+				</tr>
+				<tr>
+					<th scope="row">Empresa:</th>
+					<td><input id="pegaEmpresa" class="input a" type="text"></td>
+					<td>Nome da empresa</td>
+				</tr>
+				<tr>
+					<th scope="row">Endereço:</th>
+					<td><input id="pegaEnd" class="input a" type="text"></td>
+					<td>Endereço da empresa. Rua, Bairro, cidade, Estado</td>
+				</tr>
+				<tr>
+					<th scope="row">CNPJ:</th>
+					<td><input id="pegaCNPJ" class="input a" type="text"></td>
+					<td>CNPJ da empresa</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h4 class="text-center">Funcionário</h4>
+
+		<table class="table contracheque">
+			<thead>
+				<tr>
+					<th scope="col">Requisitos</th>
+					<th scope="col">Informações</th>
+					<th scope="col">Adicionais</th>
+					<th scope="col">Descontos</th>
+					<th scope="col">Formulas/Explicações</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th scope="row">Código:</th>
+					<td><input id="pegaCodigo" class="input a" type="text"></td>
+					<td></td>
+					<td></td>
+					<td>Código de contrato do funcionário.</td>
+				</tr>
+				<tr>
+					<th scope="row">CBO:</th>
+					<td><input id="pegaCBO" class="input a" type="text"></td>
+					<td></td>
+					<td></td>
+					<td>Cada ocupação é identificada por um código numérico e possui uma descrição detalhada das atividades e responsabilidades associadas a ela.</td>
+				</tr>
+				<tr>
+					<th scope="row">Funcionário:</th>
+					<td><input id="pegaFunc" class="input a" type="text"></td>
+					<td></td>
+					<td></td>
+					<td>Nome do funcionário que irá receber esse contracheque.</td>
+				</tr>
+				<tr>
+					<th scope="row">Função:</th>
+					<td><input id="pegaFuncao" class="input a" type="text"></td>
+					<td></td>
+					<td></td>
+					<td>Função que esse funcionário atua</td>
+				</tr>
+				<tr>
+					<th scope="row">Salário base:</th>
+					<td><input id="pegaS" class="input a" type="number" min="0"></td>
+					<td><b>Salário</b><input id="mostraS" readonly class="input a" type="number"></td>
+					<td></td>
+					<td>informado pela empresa e selecionado automaticamente pelo sistema.</td>
+				</tr>
+				<tr>
+					<th scope="row">Horas trabalhadas:</th>
+					<td><input id="pegaH" class="input a" type="number" min="0"></td>
+					<td><b>Salário/H</b><input id="mostraSH" readonly class="input a" type="number"></td>
+					<td></td>
+					<td>Salário base / Horas trabalhadas.</td>
+				</tr>
+				<tr>
+					<th scope="row">Horas por dia:</th>
+					<td><input id="pegaHdias" class="input a" type="number" min="0"></td>
+					<td></td>
+					<td></td>
+					<td>Quantidade de horas que esse funcionário trabalha por dia.</td>
+				</tr>
+				<tr>
+					<th scope="row">Dias Trabalhado:</th>
+					<td><input id="pegaDias" class="input a" type="number" min="0"></td>
+					<td><b>Horas Trabalhadas</b><input id="mostraHoras" class="input a" type="text" readonly></td>
+					<td></td>
+					<td>Quantidade de dias que esse funcionário trabalhou.</td>
+				</tr>
+				<tr>
+					<th scope="row">Salário familia: (filhos COM NECESSIDADES ESPECIAIS)</th>
+					<td><input id="pegaFE" class="input a" type="number" min="0"></td>
+					<td></td>
+					<td></td>
+					<td>É considerado mesmo se o salário for maior que o limite: R$<l class="limiteSF"></l>.</td>
+				</tr>
+				<tr>
+					<th scope="row">Salário familia: (filhos SEM NECESSIDADES ESPECIAIS)</th>
+					<td><input id="pegaF" class="input a" type="number" min="0"></td>
+					<td id="sf"><b>Total: <input id="mostraF" class="input a" style="width: 50%;"></b></td>
+					<td id="sf2"></td>
+					<td></td>
+					<td>É considerado apenas se o salário for menor que o limite: R$<l class="limiteSF"></l>.</td>
+				</tr>
+				<tr>
+					<th scope="row">Vale alimentação:</th>
+					<td><input id="pegaVA" class="input a" type="number" min="0"></td>
+					<td><input id="mostraVA" readonly class="input a" type="number"></td>
+					<td></td></td>
+					<td>informado pela empresa e selecionado automaticamente pelo sistema.</td>
+				</tr>
+				<tr>
+					<th scope="row">13º Salário:</th>
+					<td><input id="pega13" class="input a" type="checkbox"></td>
+					<td><input id="mostra13" readonly class="input a" type="number"></td>
+					<td></td>
+					<td>(Salário base / 12 meses) * Meses com mais de 15 dias trabalhados.</td>
+				</tr>
+
+				<tr>
+					<th scope="row">Hora extra (seg a sex)</th>
+					<td><input id="pegaHE" class="input a" type="number" min="0"></td>
+					<td><input id="mostraHE" readonly class="input a" type="text"></td>
+					<td></td>
+					<td>50% da hora do (salário base + periculosidade ou insalubridade, se houver).</td>
+				</tr>
+				<tr>
+					<th scope="row">Hora extra (sab/dom)</th>
+					<td><input id="pegaHE2" class="input a" type="number" min="0"></td>
+					<td><input id="mostraHE2" readonly class="input a" type="text"></td>
+					<td></td>
+					<td>100% da hora do (salário base + periculosidade e insalubridade, se houver).</td>
+				</tr>
+				<tr>
+					<th scope="row">Hora extra depois das 22h</th>
+					<td><input id="pegaHE3" class="input a" type="number" min="0"></td>
+					<td><input id="mostraHE3" readonly class="input a" type="text"><br><b>Total: </b><br><input id="mostraTotalHE" readonly class="input a" type="text"></td>
+					<td></td>
+					<td>100% da hora do (salário base + periculosidade e insalubridade, se houver), independente do dia</td>
+				</tr>
+				<tr>
+					<th scope="row">Insalubridade Leve</th>
+					<td><input id="pegaIL" class="input a" type="checkbox"></td>
+					<td><b>┐</b></td>
+					<td></td>
+					<td>10% do salário minimo</td>
+				</tr>
+				<tr>
+					<th scope="row">Insalubridade Média</th>
+					<td><input id="pegaIM" class="input a" type="checkbox"></td>
+					<td>↓</td>
+					<td></td>
+					<td>20% do salário minimo</td>
+				</tr>
+				<tr>
+					<th scope="row">Insalubridade Grave</th>
+					<td><input id="pegaIG" class="input a" type="checkbox"></td>
+					<td><b>Total:</b> <input id="mostraI" readonly class="input a" type="text"> <b>+ Salário <input id="mostraIS" readonly class="input a" type="text"></b></td>
+					<td></td>
+					<td>40% do salário minimo</td>
+				</tr>
+				<tr>
+					<th scope="row">Periculosidade</th>
+					<td><input id="pegaP" class="input a" type="checkbox"></td>
+					<td style="width: 12%;"><input id="mostraP" readonly class="input a" type="text"><p><b>+ Salário</b> <input id="mostraPS" readonly class="input a" type="text"></p></td>
+					<td></td>
+					<td>30% do salário base</td>
+				</tr>
+				<tr>
+					<th>Salário Bruto</th>
+					<td></td>
+					<td><input id="mostraSB" readonly class="input a" type="text"></td>
+					<td></td>
+					<td style="width: 25%;">Total salário familia + Vale alimentação + 13° Salário + Insalubridade + Periculosidade + Total hora extra</td>
+				</tr>
+				<tr>
+					<th scope="row">Vale transporte:</th>
+					<td><input id="pegaVT" class="input d" type="number"></td>
+					<td></td>
+					<td><input id="mostraVT" readonly class="input d" type="text"></td>
+					<td>informado pela empresa e selecionado automaticamente pelo sistema.</td>
+				</tr>
+				<tr>
+					<th scope="row">FGTS:</th>
+					<td><input id="pegaFGTS" class="input d" type="checkbox"></td>
+					<td></td>
+					<td><input id="mostraFGTS" readonly class="input d" type="text"></td>
+					<td>8% do salário bruto, porém, não descontado</td>
+				</tr>
+				<tr>
+					<th scope="row">INSS:</th>
+					<td><input id="pegaINSS" class="input d" type="checkbox"></td>
+					<td></td>
+					<td><input id="mostraINSS" readonly class="input d" type="number"></td>
+					<td>Uma porcentagem do salário bruto   <!-- Button trigger modal -->
+					<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+						Ver Mais
+					</button>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">IRRF:</th>
+					<td><input id="pegaIRRF" class="input d" type="checkbox"></td>
+					<td></td>
+					<td><input id="mostraIRRF" readonly class="input d" type="number"></td>
+					<td>Uma porcentagem do salário bruto   <!-- Button trigger modal -->
+					<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+						Ver Mais
+					</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- Tabela separada para manter o Salário Líquido fixo -->
+	<div class="table" id="salarioLiquidoTable">
+			<table class="table">
+					<tbody>
+							<tr class="table-success">
+									<th scope="row">Salário líquido:</th>
+									<td colspan="3">
+											<input id="mostraSL" readonly class="input a" type="text" style="width: 100%;">
+									</td>
+							</tr>
+					</tbody>
+			</table>
+	</div>
+
+	<!-- Modal 1 -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">INSS</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+				 <table class="table">
+					 <thead>
+						 <tr>
+							 <th scope="col">Salário de contribuições (R$)</th>
+							 <th scope="col">Alíquotas em %</th>
+							 <th scope="col">Parcela a deduzir do INSS (R$)</th>
+						 </tr>
+					 </thead>
+					 <tbody>
+						 <tr>
+							 <td>Até 1.412,00</td>
+							 <td>7,5%</td>
+								 <td>R$0,00</td>
+						 </tr>
+						 <tr>
+							 <td>De 1.412,01 até 2.666,68</td>
+							 <td>9%</td>
+							 <td>R$19,80</td>
+						 </tr>
+						 <tr>
+							 <td>De 2.666,69 até 4.000,03</td>
+							 <td>12%</td>
+							 <td>R$96,94</td>
+						 </tr>
+						 <tr>
+							 <td>De 4.000,04 até 7.786,02</td>
+							 <td>14%</td>
+							 <td>R$174,08</td>
+						 </tr>
+					 </tbody>
+				 </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 2 -->
+	<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">IRRF</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+				 <table class="table">
+					 <thead>
+						 <tr>
+							 <th scope="col">Base de Cálculo (RS)</th>
+							 <th scope="col">Alíquotas em %</th>
+							 <th scope="col">Parcela a deduzir do IR (R$)</th>
+						 </tr>
+					 </thead>
+					 <tbody>
+						 <tr>
+							 <td>De 2.112,01 até 2.826,65</td>
+							 <td>7,5%</td>
+								 <td>R$158,40</td>
+						 </tr>
+						 <tr>
+							 <td>De 2.826,66 até 3.751,05</td>
+							 <td>15%</td>
+							 <td>R$370,40</td>
+						 </tr>
+						 <tr>
+							 <td>De 3.751,06 até 4.664,68</td>
+							 <td>22,5%</td>
+							 <td>R$651,73</td>
+						 </tr>
+						 <tr>
+							 <td>Acima de 4.664,68</td>
+							 <td>27,5%</td>
+							 <td>R$884,96</td>
+						 </tr>
+					 </tbody>
+				 </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		@font-face {
+			font-family: 'minecraft'; /* Nome que você escolherá para usar a fonte */
+			src: url('./fontes/minecraft.ttf') format('truetype');
+			/* Se necessário, você pode adicionar estilos adicionais, como font-weight e font-style */
+		}
+
+	#tabela{
+			font-family: MONOSPACE;
+		}
+
+		.baixarTabela, .subHead{
+			border: 2px solid black;
+			margin-bottom: 10px;
+		}
+
+		td, th{
+			border: none;
+			text-align: end;
+		}
+
+		.Tbody, .Tfoot{
+			border: 2px solid black;
+		}
+
+		.Tfoot{
+			margin-top: -18px;
+			margin-bottom: 30px;
+		}
+	</style>
+	<div class="text-center" style="margin: 5%;">
+		<textarea id="pegaMensagem" style="
+			width: 50%;
+			border: 2px solid;
+			border-radius: 7px;" placeholder="Adicione um texto ou mensagem"></textarea>
+	</div>
+	<div style="width: 1024px; margin-left: 10%;">
+	<div id="tabela">
+		<div>
+		<table class="table baixarTabela">
+			<thead>
+				<tr>
+					<td>
+						EMPREGADOR:
+					</td>
+					<td id="empregador" colspan="2" style="text-align: start;"></td>
+					<td>
+						<h5><b>Recibo de Pagamento de Salário</b></h5>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td colspan="2"></td>
+				</tr>
+				<tr>
+				<td width="100px">
+					Nome:<br>
+					Endereço:<br>
+					CNPJ:<br>
+				</td>
+					<td id="mostraEmp" colspan="2" style="text-align: start;">
+
+					</td>
+					<td style="display: block;">
+						<h6>Mês referente: <?php echo date("m/Y"); ?></h6>
+					</td>
+				</tr>
+			</thead>
+		</table>
+		<table class="table subHead" style="">
+			<thead>
+				<tr>
+					<td width="100px">CÓDIGO</td>
+					<th style="text-align: start;">Nome do funcionário</th>
+					<td style="text-align: start;">CBO</td>
+					<td style="text-align: start;">FUNÇÃO</td>
+				</tr>
+				<tr>
+					<td id="mostraCodigo" style="text-align: start"></td>
+					<td id="mostraFunc" style="text-align: start"></td>
+					<td id="mostraCBO" style="text-align: start"></td>
+					<td id="mostraFuncao" style="text-align: start"></td>
+				</tr>
+			</thead>
+		</table>
+		<table class="table Tbody">
+			<thead>
+				<tr>
+					<td width="100px" style="border: 2px solid;">Cód.</td>
+					<td width="500px"style="text-align: center; border: 2px solid;">Descrição</td>
+					<td width="150px" style="text-align: center; border: 2px solid;">Referencia</td>
+					<td style="text-align: center; border: 2px solid;">Proventos</td>
+					<td style="text-align: center; border: 2px solid;">Descontos</td>
+				</tr>
+			</thead>
+			<tbody class="info">
+				<tr>
+					<td width="100px" style="border: 2px solid;"></td>
+					<td width="500px"style="text-align: center; border: 2px solid;"></td>
+					<td width="150px" style="text-align: center; border: 2px solid;"></td>
+					<td style="text-align: center; border: 2px solid;"></td>
+					<td style="text-align: center; border: 2px solid;"></td>
+				</tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<td rowspan="2" style="text-align: start; border: 2px solid;">MENSAGENS</td>
+					<td rowspan="2" colspan="2" id="mensagem" style="text-align: start; padding: 0px;">
+					</td>
+					<td id="totalVenc" style="font-size: 15px; border: 2px solid;"></td>
+					<td id="totalDesc" style="font-size: 15px; border: 2px solid;"></td>
+				</tr>
+				<tr>
+					<td style="border: 2px solid;">Liquido a receber --></td>
+					<td id="totalLiquid" style="border: 2px solid;"></td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table Tfoot">
+				<tbody>
+					<tr>
+						<td id="totalSB" style="width: 200px;"></td>
+						<td id="baseINSS" style="width: 200px;"></td>
+						<td id="baseFGTS" style="width: 200px;"></td>
+						<td id="FGTSmes" style="width: 200px;"></td>
+						<td id="baseIRRF" style="width: 200px;"></td>
+						<td id="faixaIRRF" style="width: 200px;"></td>
+					</tr>
+				</tbody>
+		</table>
+	</div>
+		<table class="table Tfoot">
+				<tbody>
+					<tr>
+						<td colspan="4" style="text-align: start;">DECLARO TER RECEBIDO A IMPORTANCIA LIQUIDA DISCRIMINADA NESTE RECIBO</td>
+					</tr>
+					<tr>
+						<td style="text-align: center">/ &nbsp; &nbsp; &nbsp; &nbsp; /</td>
+					</tr>
+					<tr style="border: 2px solid;">
+						<td style="text-align: center; width: 49%;">DATA</td>
+						<td style="width: 2%; border-top: 2px solid white;"></td>
+						<td style="text-align: center; width: 49%;">ASSINATURA DO FUNCIONÁRIO</td>
+					</tr>
+				</tbody>
+		</table>
+	</div>
+	</div>
+	<div class="text-center">
+		<audio id="audio" src="./audios/impressora.wav"></audio>
+	<button class="btn btn-secondary" id="baixar" style="
+		height: 75px;
+		width: 300px;
+		font-size: 35px;
+		margin-bottom: 5%;">
+		Imprimir <i class="bi bi-printer-fill"></i>
+	</button>
+	</div>
+  </div>
+  <script type="text/javascript" src="./scriptScc.js"></script>
+  
+	<div class="footer foot">
+		<div class="container" style="display: flex;">
+			<div class="container">
+				© 2023 Todos os Direitos Reservados</br>
+				Projeto criado por Laboratória STAR</br>
+				Site desenvolvido por <a href="https://www.linkedin.com/in/luan-silva-3385542b4/" style="color: cyan; font-weight: bold;">
+					Luan Silva
+				</a>
+			</div>
+			</br>
+				Instagram: <a href="https://www.instagram.com/luan_silvakw/" target="_blank">
+					<img style="border-radius: 100%; margin-right: 12px;" src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png" width="50px">
+				</a>
+			</br>  
+			</div>
+		</div>
+		</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+	</body>
+	</html>
